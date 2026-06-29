@@ -1,31 +1,27 @@
 # 🎬 Flickzen
 
-**AI-powered mood-based movie recommendation engine**
-
 > *found your fish in the ocean 🐟*
+
+A mood-based movie recommendation engine. Tell it how you're feeling, get something worth watching.
 
 Live → [flickzen.vercel.app](https://flickzen.vercel.app)
 
 ---
 
-## What it does
-
-Tell Flickzen how you're feeling — it figures out what you should watch. No endless scrolling, no decision fatigue. Pick a vibe, get a curated list of movies with real posters and AI-written match reasons.
-
-## Tech Stack
+## Stack
 
 | Layer | Tech |
 |---|---|
 | Framework | Next.js 14 (App Router) |
-| AI | Groq API — llama-3.3-70b-versatile |
+| AI | Groq — llama-3.3-70b-versatile |
 | Movie Data | TMDB API |
 | Deployment | Vercel |
 
 ## Features
 
-- 🎭 Mood-based recommendation engine
-- 🖼️ Real movie posters via TMDB
-- 🤖 AI-generated match reason for each pick
+- 🎭 Mood-based recommendations
+- 🖼️ Movie posters via TMDB
+- 🤖 AI-written reason for each pick
 - ⚡ Fast inference via Groq
 
 ## Run locally
@@ -45,8 +41,3 @@ GROQ_API_KEY=your_groq_api_key
 ```bash
 npm run dev
 ```
-
-## Built by
-
-**Anubha Goyal** — BTech CSE (AI/ML), KIIT University  
-[@just-anubha](https://github.com/just-anubha)

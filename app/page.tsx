@@ -13,7 +13,7 @@ const questions = [
     id: 'time',
     question: "How much time do you have?",
     subtitle: "be honest 😄",
-    options: ['⚡ 30 minutes', '🎬 1 to 2 hours', '🌙 All evening'],
+    options: ['⚡ Under 30 mins', '🎬 1 hour', '🎥 1.5 to 2 hours', '🌙 All evening'],
   },
   {
     id: 'type',
@@ -25,19 +25,26 @@ const questions = [
     id: 'vibe',
     question: "What mood are you in?",
     subtitle: "pick what feels right",
-    options: ['😂 Comedy', '😭 Emotional', '🤯 Thriller', '😴 Light and easy', '🔥 Action'],
+    options: ['😂 Comedy', '😭 Emotional', '🤯 Thriller', '😴 Light and easy', '🔥 Action', '💀 Horror', '💕 Romance', '🚀 Sci-fi or Fantasy'],
   },
   {
     id: 'language',
     question: "Which language?",
     subtitle: "we have it all",
-    options: ['🇮🇳 Hindi', '🌍 English', '🎭 Any language'],
+    options: ['🇮🇳 Hindi', '🌍 English', '🌐 Any language'],
   },
   {
     id: 'age',
     question: "Who is in the room?",
     subtitle: "so we pick something everyone enjoys",
     options: ['👶 Kids too', '🧑 Teenagers', '🧔 Adults only', '👨‍👩‍👦 Mixed ages'],
+  },
+  {
+    id: 'ott',
+    question: "What do you have access to?",
+    subtitle: "pick all that apply — we'll only suggest what you can actually watch",
+    options: ['Netflix', 'Prime Video', 'Hotstar / Disney+', 'JioCinema', 'ZEE5', 'YouTube Free', '🤷 I will manage'],
+    multi: true,
   },
   {
     id: 'profession',
@@ -52,36 +59,76 @@ interface Movie {
   reason: string;
   poster: string | null;
   type?: string;
+  rating?: number;
+  votes?: number;
+  ott?: string;
 }
 
-function MovieCard({ movie }: { movie: Movie }) {
+interface RecommendationData {
+  preface: string;
+  movies: Movie[];
+}
+
+function StarRating({ rating }: { rating: number }) {
+  const stars = Math.round(rating / 2);
   return (
-    <div className="bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 hover:border-red-500 transition-all duration-300">
-      {movie.poster ? (
-        <img
-          src={movie.poster}
-          alt={movie.title}
-          className="w-full h-56 object-cover bg-zinc-800"
-          loading="eager"
-          onLoad={(e) => e.currentTarget.classList.add('opacity-100')}
-          style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
-        />
-      ) : (
-        <div className="w-full h-40 bg-gradient-to-br from-zinc-800 to-zinc-900 flex flex-col items-center justify-center gap-2">
-          <span className="text-4xl">🎬</span>
-          <span className="text-zinc-600 text-xs">poster not available</span>
-        </div>
-      )}
-      <div className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <h2 className="text-xl font-bold">{movie.title}</h2>
+    <div className="flex items-center gap-1">
+      {[1,2,3,4,5].map(i => (
+        <span key={i} className={i <= stars ? 'text-yellow-400' : 'text-zinc-700'} style={{fontSize: '12px'}}>★</span>
+      ))}
+      <span className="text-zinc-400 text-xs ml-1">{rating.toFixed(1)}/10</span>
+    </div>
+  );
+}
+
+function MovieCard({ movie, index }: { movie: Movie; index: number }) {
+  return (
+    <div className="bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 hover:border-red-500 transition-all duration-300 group">
+      <div className="relative">
+        {movie.poster ? (
+          <img
+            src={movie.poster}
+            alt={movie.title}
+            className="w-full h-64 object-cover bg-zinc-800 group-hover:scale-[1.02] transition-transform duration-500"
+            loading="eager"
+          />
+        ) : (
+          <div className="w-full h-48 bg-gradient-to-br from-zinc-800 to-zinc-900 flex flex-col items-center justify-center gap-2">
+            <span className="text-4xl">🎬</span>
+            <span className="text-zinc-600 text-xs">poster not available</span>
+          </div>
+        )}
+        <div className="absolute top-3 left-3 flex gap-2">
           {movie.type && (
-            <span className="text-xs bg-red-600 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-red-600 px-2 py-1 rounded-full font-semibold backdrop-blur-sm">
               {movie.type}
             </span>
           )}
+          {index === 0 && (
+            <span className="text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold backdrop-blur-sm">
+              🔥 Top Pick
+            </span>
+          )}
         </div>
-        <p className="text-zinc-400 text-sm leading-relaxed">{movie.reason}</p>
+        {movie.ott && (
+          <div className="absolute bottom-3 right-3">
+            <span className="text-xs bg-black/80 border border-zinc-600 px-2 py-1 rounded-full backdrop-blur-sm text-zinc-300">
+              📺 {movie.ott}
+            </span>
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-1">{movie.title}</h2>
+        {movie.rating && movie.rating > 0 && (
+          <div className="flex items-center gap-3 mb-2">
+            <StarRating rating={movie.rating} />
+            {movie.votes && movie.votes > 0 && (
+              <span className="text-zinc-500 text-xs">{(movie.votes / 1000).toFixed(0)}k reviews</span>
+            )}
+          </div>
+        )}
+        <p className="text-zinc-400 text-sm leading-relaxed italic">"{movie.reason}"</p>
       </div>
     </div>
   );
@@ -90,17 +137,33 @@ function MovieCard({ movie }: { movie: Movie }) {
 export default function Home() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [multiSelected, setMultiSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [data, setData] = useState<RecommendationData | null>(null);
+
+  const current = questions[step];
+  const isMulti = (current as any)?.multi;
 
   const handleAnswer = (answer: string) => {
-    const newAnswers = { ...answers, [questions[step].id]: answer };
+    const newAnswers = { ...answers, [current.id]: answer };
     setAnswers(newAnswers);
     if (step < questions.length - 1) {
       setStep(step + 1);
     } else {
       getRecommendations(newAnswers);
     }
+  };
+
+  const toggleMulti = (option: string) => {
+    setMultiSelected(prev =>
+      prev.includes(option) ? prev.filter(o => o !== option) : [...prev, option]
+    );
+  };
+
+  const confirmMulti = () => {
+    const val = multiSelected.length > 0 ? multiSelected.join(', ') : 'Any';
+    handleAnswer(val);
+    setMultiSelected([]);
   };
 
   const getRecommendations = async (finalAnswers: Record<string, string>) => {
@@ -111,11 +174,11 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(finalAnswers),
       });
-      const data = await res.json();
-      setMovies(data.movies || []);
+      const json = await res.json();
+      setData({ preface: json.preface || '', movies: json.movies || [] });
     } catch (e) {
       console.error(e);
-      setMovies([]);
+      setData({ preface: '', movies: [] });
     }
     setLoading(false);
   };
@@ -123,20 +186,25 @@ export default function Home() {
   const reset = () => {
     setStep(0);
     setAnswers({});
-    setMovies([]);
+    setMultiSelected([]);
+    setData(null);
   };
 
-  // Results screen
-  if (movies.length > 0) {
+  if (data && data.movies.length > 0) {
     return (
       <main className="min-h-screen bg-black text-white flex flex-col items-center p-6">
-        <div className="mt-8 mb-2 text-center">
-          <h1 className="text-3xl font-bold">🎬 Your Flickzen</h1>
-          <p className="text-zinc-400 mt-1">found your fish in the ocean 🐟</p>
+        <div className="mt-10 mb-2 text-center max-w-md">
+          <h1 className="text-3xl font-bold mb-3">🎬 Your Flickzen</h1>
+          {data.preface && (
+            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 mb-2">
+              <p className="text-zinc-300 text-sm leading-relaxed italic">"{data.preface}"</p>
+            </div>
+          )}
+          <p className="text-zinc-600 text-xs mt-3">found your fish in the ocean 🐟</p>
         </div>
-        <div className="flex flex-col gap-6 w-full max-w-md mt-8">
-          {movies.slice(0, 3).map((movie, i) => (
-            <MovieCard key={i} movie={movie} />
+        <div className="flex flex-col gap-6 w-full max-w-md mt-6">
+          {data.movies.map((movie, i) => (
+            <MovieCard key={i} movie={movie} index={i} />
           ))}
         </div>
         <button
@@ -149,7 +217,6 @@ export default function Home() {
     );
   }
 
-  // Loading screen
   if (loading) {
     return (
       <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
@@ -160,8 +227,6 @@ export default function Home() {
     );
   }
 
-  // Question screen
-  const current = questions[step];
   const progress = (step / questions.length) * 100;
 
   return (
@@ -181,17 +246,44 @@ export default function Home() {
       <p className="text-zinc-600 text-xs mb-8">{step + 1} of {questions.length}</p>
       <p className="text-2xl font-bold text-center mb-1">{current.question}</p>
       <p className="text-zinc-500 text-sm text-center mb-8">{current.subtitle}</p>
-      <div className="flex flex-col gap-3 w-full max-w-sm">
-        {current.options.map((option) => (
+
+      {isMulti ? (
+        <div className="flex flex-col gap-3 w-full max-w-sm">
+          <div className="flex flex-wrap gap-2 mb-2">
+            {current.options.map((option) => (
+              <button
+                key={option}
+                onClick={() => toggleMulti(option)}
+                className={`px-4 py-2 rounded-full border text-sm font-medium transition-all duration-200 ${
+                  multiSelected.includes(option)
+                    ? 'bg-red-600 border-red-500 text-white'
+                    : 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-red-500'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
           <button
-            key={option}
-            onClick={() => handleAnswer(option)}
-            className="bg-zinc-900 hover:bg-red-600 border border-zinc-700 hover:border-red-500 text-white text-base py-4 px-6 rounded-2xl transition-all duration-200 text-left font-medium"
+            onClick={confirmMulti}
+            className="bg-red-600 hover:bg-red-700 text-white py-4 px-6 rounded-2xl font-semibold transition-all duration-200 mt-2"
           >
-            {option}
+            {multiSelected.length > 0 ? `Continue with ${multiSelected.length} selected →` : 'Skip →'}
           </button>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3 w-full max-w-sm">
+          {current.options.map((option) => (
+            <button
+              key={option}
+              onClick={() => handleAnswer(option)}
+              className="bg-zinc-900 hover:bg-red-600 border border-zinc-700 hover:border-red-500 text-white text-base py-4 px-6 rounded-2xl transition-all duration-200 text-left font-medium"
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
     </main>
   );
 }

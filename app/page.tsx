@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const questions = [
   {
@@ -54,41 +54,18 @@ interface Movie {
   type?: string;
 }
 
-const TMDB_KEY = 'fcee251572b585fffe840f4f2f89c091';
-
-async function fetchPoster(title: string): Promise<string | null> {
-  try {
-    const [movieRes, tvRes] = await Promise.all([
-      fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(title)}&api_key=${TMDB_KEY}`),
-      fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(title)}&api_key=${TMDB_KEY}`)
-    ]);
-    const [movieData, tvData] = await Promise.all([movieRes.json(), tvRes.json()]);
-    const posterPath = movieData.results?.[0]?.poster_path || tvData.results?.[0]?.poster_path;
-    return posterPath ? `https://image.tmdb.org/t/p/w500${posterPath}` : null;
-  } catch {
-    return null;
-  }
-}
-
 function MovieCard({ movie }: { movie: Movie }) {
-  const [poster, setPoster] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchPoster(movie.title).then((p) => {
-      setPoster(p);
-      setLoading(false);
-    });
-  }, [movie.title]);
-
   return (
     <div className="bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 hover:border-red-500 transition-all duration-300">
-      {loading ? (
-        <div className="w-full h-40 bg-zinc-800 animate-pulse flex items-center justify-center">
-          <span className="text-zinc-600 text-sm">loading poster...</span>
-        </div>
-      ) : poster ? (
-        <img src={poster} alt={movie.title} className="w-full h-56 object-cover" />
+      {movie.poster ? (
+        <img
+          src={movie.poster}
+          alt={movie.title}
+          className="w-full h-56 object-cover bg-zinc-800"
+          loading="eager"
+          onLoad={(e) => e.currentTarget.classList.add('opacity-100')}
+          style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
+        />
       ) : (
         <div className="w-full h-40 bg-gradient-to-br from-zinc-800 to-zinc-900 flex flex-col items-center justify-center gap-2">
           <span className="text-4xl">🎬</span>

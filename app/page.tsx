@@ -6,51 +6,51 @@ const questions = [
   {
     id: 'who',
     question: "Who's watching tonight?",
-    subtitle: "tell us your company ðŸ¿",
-    options: ['ðŸ§ Just me', 'ðŸ‘¨â€ðŸ‘©â€ðŸ‘§ Family', 'ðŸ‘« Couple', 'ðŸŽ“ Friends'],
+    subtitle: "tell us your company 🍿",
+    options: ['🧍 Just me', '👨‍👩‍👧 Family', '👫 Couple', '🎓 Friends'],
   },
   {
     id: 'time',
     question: "How much time do you have?",
-    subtitle: "be honest ðŸ˜„",
-    options: ['âš¡ Under 30 mins', 'ðŸŽ¬ 1 hour', 'ðŸŽ¥ 1.5 to 2 hours', 'ðŸŒ™ All evening'],
+    subtitle: "be honest 😄",
+    options: ['⚡ Under 30 mins', '🎬 1 hour', '🎥 1.5 to 2 hours', '🌙 All evening'],
   },
   {
     id: 'type',
     question: "Movie or Series?",
     subtitle: "how committed are you tonight?",
-    options: ['ðŸŽ­ Movie', 'ðŸ“º Series', 'ðŸ¤· No preference'],
+    options: ['🎭 Movie', '📺 Series', '🤷 No preference'],
   },
   {
     id: 'vibe',
     question: "What mood are you in?",
     subtitle: "pick what feels right",
-    options: ['ðŸ˜‚ Comedy', 'ðŸ˜­ Emotional', 'ðŸ¤¯ Thriller', 'ðŸ˜´ Light and easy', 'ðŸ”¥ Action', 'ðŸ’€ Horror', 'ðŸ’• Romance', 'ðŸš€ Sci-fi or Fantasy', 'ðŸ§¸ Zero Adulting Zone'],
+    options: ['😂 Comedy', '😭 Emotional', '🤯 Thriller', '😴 Light and easy', '🔥 Action', '💀 Horror', '💕 Romance', '🚀 Sci-fi or Fantasy', '🧸 Zero Adulting Zone'],
   },
   {
     id: 'language',
     question: "Which language?",
     subtitle: "we have it all",
-    options: ['ðŸ‡®ðŸ‡³ Hindi', 'ðŸŒ English', 'ðŸŒ Any language'],
+    options: ['🇮🇳 Hindi', '🌍 English', '🌐 Any language'],
   },
   {
     id: 'age',
     question: "Who is in the room?",
     subtitle: "so we pick something everyone enjoys",
-    options: ['ðŸ‘¶ Kids too', 'ðŸ§‘ Teenagers', 'ðŸ§” Adults only', 'ðŸ‘¨â€ðŸ‘©â€ðŸ‘¦ Mixed ages'],
+    options: ['👶 Kids too', '🧑 Teenagers', '🧔 Adults only', '👨‍👩‍👦 Mixed ages'],
   },
   {
     id: 'ott',
     question: "What do you have access to?",
-    subtitle: "pick all that apply â€” we'll only suggest what you can actually watch",
-    options: ['Netflix', 'Prime Video', 'Hotstar / Disney+', 'JioCinema', 'ZEE5', 'YouTube Free', 'ðŸ¤· I will manage'],
+    subtitle: "pick all that apply — we'll only suggest what you can actually watch",
+    options: ['Netflix', 'Prime Video', 'Hotstar / Disney+', 'JioCinema', 'ZEE5', 'YouTube Free', '🤷 I will manage'],
     multi: true,
   },
   {
     id: 'profession',
     question: "What do you do?",
-    subtitle: "this helps us go even deeper ðŸŽ¯",
-    options: ['ðŸ‘¨â€âš•ï¸ Doctor or Healthcare', 'ðŸ’¼ Business or Finance', 'ðŸ›ï¸ Government or Civil Services', 'ðŸ  Homemaker', 'ðŸŽ“ Student', 'ðŸ’» Tech or IT', 'ðŸŽ¨ Arts or Creative', 'â­ï¸ Skip'],
+    subtitle: "this helps us go even deeper 🎯",
+    options: ['👨‍⚕️ Doctor or Healthcare', '💼 Business or Finance', '🏛️ Government or Civil Services', '🏠 Homemaker', '🎓 Student', '💻 Tech or IT', '🎨 Arts or Creative', '⏭️ Skip'],
   },
 ];
 
@@ -63,6 +63,7 @@ interface Movie {
   votes?: number;
   ott?: string;
   cinegram?: boolean;
+  cartoonWeb?: boolean;
 }
 
 interface RecommendationData {
@@ -75,7 +76,7 @@ function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-1">
       {[1,2,3,4,5].map(i => (
-        <span key={i} className={i <= stars ? 'text-yellow-400' : 'text-zinc-700'} style={{fontSize: '12px'}}>â˜…</span>
+        <span key={i} className={i <= stars ? 'text-yellow-400' : 'text-zinc-700'} style={{fontSize: '12px'}}>★</span>
       ))}
       <span className="text-zinc-400 text-xs ml-1">{rating.toFixed(1)}/10</span>
     </div>
@@ -95,7 +96,7 @@ function MovieCard({ movie, index }: { movie: Movie; index: number }) {
           />
         ) : (
           <div className="w-full h-48 bg-gradient-to-br from-zinc-800 to-zinc-900 flex flex-col items-center justify-center gap-2">
-            <span className="text-4xl">ðŸŽ¬</span>
+            <span className="text-4xl">🎬</span>
             <span className="text-zinc-600 text-xs">poster not available</span>
           </div>
         )}
@@ -107,14 +108,14 @@ function MovieCard({ movie, index }: { movie: Movie; index: number }) {
           )}
           {index === 0 && (
             <span className="text-xs bg-yellow-500 text-black px-2 py-1 rounded-full font-bold backdrop-blur-sm">
-              ðŸ”¥ Top Pick
+              🔥 Top Pick
             </span>
           )}
         </div>
         {movie.ott && (
           <div className="absolute bottom-3 right-3">
             <span className="text-xs bg-black/80 border border-zinc-600 px-2 py-1 rounded-full backdrop-blur-sm text-zinc-300">
-              ðŸ“º {movie.ott}
+              📺 {movie.ott}
             </span>
           </div>
         )}
@@ -130,13 +131,20 @@ function MovieCard({ movie, index }: { movie: Movie; index: number }) {
           </div>
         )}
         <p className="text-zinc-400 text-sm leading-relaxed italic mb-3">"{movie.reason}"</p>
-        {movie.cinegram && (<a`n            href="https://cinegram.tv/home"
+        {movie.cinegram && (
+          
+            href="https://cinegram.tv/home"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-xs bg-pink-600/20 border border-pink-500/40 text-pink-300 px-3 py-1.5 rounded-full hover:bg-pink-600/40 transition-all duration-200"
           >
-            ðŸŽ€ Watch on CineGram
+            🎀 Watch on CineGram
           </a>
+        )}
+        {movie.cartoonWeb && (
+          <span className="inline-flex items-center gap-2 text-xs bg-blue-600/20 border border-blue-500/40 text-blue-300 px-3 py-1.5 rounded-full">
+            🎨 Find on YouTube / Cartoon sites
+          </span>
         )}
       </div>
     </div>
@@ -203,13 +211,13 @@ export default function Home() {
     return (
       <main className="min-h-screen bg-black text-white flex flex-col items-center p-6">
         <div className="mt-10 mb-2 text-center max-w-md">
-          <h1 className="text-3xl font-bold mb-3">ðŸŽ¬ Your Flickzen</h1>
+          <h1 className="text-3xl font-bold mb-3">🎬 Your Flickzen</h1>
           {data.preface && (
             <div className="bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 mb-2">
               <p className="text-zinc-300 text-sm leading-relaxed italic">"{data.preface}"</p>
             </div>
           )}
-          <p className="text-zinc-600 text-xs mt-3">found your fish in the ocean ðŸŸ</p>
+          <p className="text-zinc-600 text-xs mt-3">found your fish in the ocean 🐟</p>
         </div>
         <div className="flex flex-col gap-6 w-full max-w-md mt-6">
           {data.movies.map((movie, i) => (
@@ -220,7 +228,7 @@ export default function Home() {
           onClick={reset}
           className="mt-8 mb-12 border border-zinc-600 px-8 py-3 rounded-full text-zinc-300 hover:border-red-500 hover:text-red-400 transition-all duration-200 text-sm"
         >
-          â†© Start over
+          ↩ Start over
         </button>
       </main>
     );
@@ -229,9 +237,9 @@ export default function Home() {
   if (loading) {
     return (
       <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
-        <div className="text-6xl animate-bounce">ðŸŽ¬</div>
+        <div className="text-6xl animate-bounce">🎬</div>
         <p className="text-white text-xl font-semibold">Finding your perfect watch...</p>
-        <p className="text-zinc-500 text-sm">searching the ocean for your fish ðŸŸ</p>
+        <p className="text-zinc-500 text-sm">searching the ocean for your fish 🐟</p>
       </main>
     );
   }
@@ -241,7 +249,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-1">ðŸŽ¬ Flickzen</h1>
+        <h1 className="text-4xl font-bold mb-1">🎬 Flickzen</h1>
         <p className="text-zinc-500 text-sm">stop scrolling. find your flick.</p>
       </div>
       <div className="w-full max-w-sm mb-2">
@@ -277,7 +285,7 @@ export default function Home() {
             onClick={confirmMulti}
             className="bg-red-600 hover:bg-red-700 text-white py-4 px-6 rounded-2xl font-semibold transition-all duration-200 mt-2"
           >
-            {multiSelected.length > 0 ? `Continue with ${multiSelected.length} selected â†’` : 'Skip â†’'}
+            {multiSelected.length > 0 ? `Continue with ${multiSelected.length} selected →` : 'Skip →'}
           </button>
         </div>
       ) : (

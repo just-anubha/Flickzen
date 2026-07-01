@@ -25,7 +25,7 @@ const questions = [
     id: 'vibe',
     question: "What mood are you in?",
     subtitle: "pick what feels right",
-    options: ['😂 Comedy', '😭 Emotional', '🤯 Thriller', '😴 Light and easy', '🔥 Action', '💀 Horror', '💕 Romance', '🚀 Sci-fi or Fantasy'],
+    options: ['😂 Comedy', '😭 Emotional', '🤯 Thriller', '😴 Light and easy', '🔥 Action', '💀 Horror', '💕 Romance', '🚀 Sci-fi or Fantasy', '🧸 Zero Adulting Zone'],
   },
   {
     id: 'language',
@@ -62,6 +62,7 @@ interface Movie {
   rating?: number;
   votes?: number;
   ott?: string;
+  cinegram?: boolean;
 }
 
 interface RecommendationData {
@@ -98,7 +99,7 @@ function MovieCard({ movie, index }: { movie: Movie; index: number }) {
             <span className="text-zinc-600 text-xs">poster not available</span>
           </div>
         )}
-        <div className="absolute top-3 left-3 flex gap-2">
+        <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
           {movie.type && (
             <span className="text-xs bg-red-600 px-2 py-1 rounded-full font-semibold backdrop-blur-sm">
               {movie.type}
@@ -128,7 +129,17 @@ function MovieCard({ movie, index }: { movie: Movie; index: number }) {
             )}
           </div>
         )}
-        <p className="text-zinc-400 text-sm leading-relaxed italic">"{movie.reason}"</p>
+        <p className="text-zinc-400 text-sm leading-relaxed italic mb-3">"{movie.reason}"</p>
+        {movie.cinegram && (
+          
+            href="https://cinegram.tv/home"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-xs bg-pink-600/20 border border-pink-500/40 text-pink-300 px-3 py-1.5 rounded-full hover:bg-pink-600/40 transition-all duration-200"
+          >
+            🎀 Watch on CineGram
+          </a>
+        )}
       </div>
     </div>
   );

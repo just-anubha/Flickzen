@@ -89,10 +89,11 @@ Respond ONLY with valid JSON, no markdown, no backticks:
         'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: 'openai/gpt-oss-120b',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.85,
-        max_tokens: 1500,
+        max_tokens: 4000,
+        reasoning_effort: 'low',
       }),
     });
 
@@ -120,10 +121,13 @@ Respond ONLY with valid JSON, no markdown, no backticks:
             tmdbTVRes.json()
           ]);
 
-          const movieResult = tmdbMovieData.results?.[0];
-          const tvResult = tmdbTVData.results?.[0];
-          const bestResult = movieResult || tvResult;
-          const posterPath = movieResult?.poster_path || tvResult?.poster_path;
+          type Hit = { poster_path?: string | null; vote_average?: number; vote_count?: number };
+          const pick = (list?: Hit[]) => list?.find((r) => r.poster_path) || list?.[0];
+          const movieResult = pick(tmdbMovieData.results);
+          const tvResult = pick(tmdbTVData.results);
+          const isSeries = /series|tv|show/i.test(movie.type || '');
+          const bestResult = isSeries ? (tvResult || movieResult) : (movieResult || tvResult);
+          const posterPath = bestResult?.poster_path || movieResult?.poster_path || tvResult?.poster_path;
           const poster = posterPath ? `https://image.tmdb.org/t/p/w500${posterPath}` : null;
           const rating = bestResult?.vote_average || 0;
           const votes = bestResult?.vote_count || 0;

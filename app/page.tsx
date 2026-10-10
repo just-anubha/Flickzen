@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 
@@ -132,7 +132,7 @@ function MovieCard({ movie, index }: { movie: Movie; index: number }) {
         )}
         <p className="text-zinc-400 text-sm leading-relaxed italic mb-3">"{movie.reason}"</p>
         {movie.cinegram && (
-          
+          <a
             href="https://cinegram.tv/home"
             target="_blank"
             rel="noopener noreferrer"

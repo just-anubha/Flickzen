@@ -122,11 +122,11 @@ function MovieCard({ movie, index }: { movie: Movie; index: number }) {
       </div>
       <div className="p-4">
         <h2 className="text-xl font-bold mb-1">{movie.title}</h2>
-        {movie.rating && movie.rating > 0 && (
+        {!!movie.rating && movie.rating > 0 && (
           <div className="flex items-center gap-3 mb-2">
             <StarRating rating={movie.rating} />
-            {movie.votes && movie.votes > 0 && (
-              <span className="text-zinc-500 text-xs">{(movie.votes / 1000).toFixed(0)}k reviews</span>
+            {!!movie.votes && movie.votes > 0 && (
+              <span className="text-zinc-500 text-xs">{movie.votes >= 1000 ? Math.round(movie.votes / 1000) + 'k' : movie.votes} reviews</span>
             )}
           </div>
         )}

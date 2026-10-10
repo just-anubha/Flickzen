@@ -59,7 +59,7 @@ RULE 5 — TIME IS STRICT:
 - All evening → anything goes
 
 RULE 6 — MAINSTREAM FIRST then hidden gems:
-Always include popular picks people actually know: Harry Potter, Barbie, Avengers, Stranger Things, KGF, RRR, 3 Idiots, ZNMD, Mirzapur, Panchayat, Scam 1992, Guardians of the Galaxy, Interstellar, Inception, Dark Knight, Doraemon, Your Name, Spirited Away.
+Prefer well-known titles that genuinely fit this exact mood, company and age group. Only include a famous title if it truly belongs in tonight's vibe - never force a title in just because it is popular.
 
 RULE 7 — VARIETY: never 3 picks from exact same subcategory. Mix it up.
 
@@ -68,6 +68,8 @@ BAD: "A great thriller with excellent performances."
 GOOD: "as a finance bro, watching Harshad Mehta bend the entire stock market will feel both inspiring and deeply illegal — you'll finish it in one sitting and immediately google if any of it is still possible"
 
 RULE 9 — PREFACE: 2-3 sentences. Like a book's opening line. Personal to their exact vibe + company + profession tonight. Warm, funny, sets the mood.
+
+RULE 10 - FIT CHECK (most important): every pick must really fit ALL of the user profile. If the company is a partner or date, pick couple-friendly titles that match the mood. If the age group is adult, no teen, school or college shows and no kids animation unless the vibe is Zero Adulting Zone. For a romance vibe, every pick must be a real love story. Only include a title if you are certain of its plot, its release year, and that it streams on the platform you name in India. If you are not sure, choose a different title. Never invent a plot in the reason.
 
 Respond ONLY with valid JSON, no markdown, no backticks:
 {
@@ -91,9 +93,9 @@ Respond ONLY with valid JSON, no markdown, no backticks:
       body: JSON.stringify({
         model: 'openai/gpt-oss-120b',
         messages: [{ role: 'user', content: prompt }],
-        temperature: 0.85,
-        max_tokens: 4000,
-        reasoning_effort: 'low',
+        temperature: 0.6,
+        max_tokens: 6000,
+        reasoning_effort: 'medium',
       }),
     });
 
@@ -121,10 +123,10 @@ Respond ONLY with valid JSON, no markdown, no backticks:
             tmdbTVRes.json()
           ]);
 
-          type Hit = { poster_path?: string | null; vote_average?: number; vote_count?: number };
-          const pick = (list?: Hit[]) => list?.find((r) => r.poster_path) || list?.[0];
-          const movieResult = pick(tmdbMovieData.results);
-          const tvResult = pick(tmdbTVData.results);
+          type Hit = { poster_path?: string | null; vote_average?: number; vote_count?: number; release_date?: string; first_air_date?: string };
+          const pick = (list: Hit[] | undefined, y: number) => list?.find((r) => r.poster_path && (r.release_date || r.first_air_date || '').startsWith(String(y))) || list?.find((r) => r.poster_path) || list?.[0];
+          const movieResult = pick(tmdbMovieData.results, movie.year);
+          const tvResult = pick(tmdbTVData.results, movie.year);
           const isSeries = /series|tv|show/i.test(movie.type || '');
           const bestResult = isSeries ? (tvResult || movieResult) : (movieResult || tvResult);
           const posterPath = bestResult?.poster_path || movieResult?.poster_path || tvResult?.poster_path;
